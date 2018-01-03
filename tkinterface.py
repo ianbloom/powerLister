@@ -27,31 +27,74 @@ def fileOpener():
 
 def accountsFileOpener():
 	global accountsFileName
-	global accountsHeaderArray
+	global accountsHeaderDict
 
 	accountsFileName = fileOpener()
-	print(accountsFileName)
 	headerTest = csvLoader(accountsFileName)
-	accountsHeaderArray = headerParse(headerTest)
-	idMenu = OptionMenu(root, idvar, *accountsHeaderArray, command=headerPrinter)
+	accountsHeaderDict = headerParse(headerTest)
+	idMenu = OptionMenu(root, idvar, *accountsHeaderDict)
 	idMenu.grid(row=5, column=0)
 
-	valMenu = OptionMenu(root, valvar, *accountsHeaderArray, command=headerPrinter)
+	valMenu = OptionMenu(root, valvar, *accountsHeaderDict)
 	valMenu.grid(row=7, column=0)
 
 	return 0
 
 
-
 def salesforceFileOpener():
 	global salesForceFileName
 	salesForceFileName = fileOpener()
-	print(salesForceFileName)
 
 def headerPrinter():
-	global accountsHeaderArray
-	for item in accountsHeaderArray:
+	global accountsHeaderDict
+	for item in accountsHeaderDict:
 		print(item)
+
+def runIt():
+	global accountsFileName
+	global salesForceFileName
+	global accountsHeaderDict
+
+	headerTest = csvLoader(accountsFileName)
+	headerArray = headerParse(headerTest)
+
+	idPair = idvar.get()
+	idColumn = accountsHeaderDict[idPair]
+	print(idColumn)
+
+	valuePair = valvar.get()
+	valueColumn = accountsHeaderDict[valuePair]
+	print(valueColumn)
+
+	file = csvLoader('accountsPortal.csv')
+
+	accountsDict = columnStrip(file, int(idColumn), int(valueColumn))
+
+	# Here's where I'd have the user select the condition to apply to the dictionary to filter users
+
+	###
+	###
+	### GET THE > AND THE 20 PROGRAMATICALLY
+	###
+	###
+
+	conditionalVariable = convar.get()
+	conditionalValue = float(e.get())
+
+	accountsDict = dictDeleter(accountsDict, conditionalVariable, conditionalValue)
+
+	# Here's where the user would select their salesforce .csv 
+	SFfile = csvLoader(salesForceFileName)
+
+	# Ask the user to name the newfile
+	newFileName = f.get()
+	newFileName += ".csv"
+	newfile = csvWriter(newFileName)
+
+	accountSiteColumn = 1
+
+	# Ask the user to name their header, possibly before naming newfile?
+	dictSearcher(accountsDict, SFfile, accountSiteColumn, newfile, 'test header')
 
 ###
 ###
@@ -61,7 +104,7 @@ def headerPrinter():
 
 accountsFileName = ""
 salesForceFileName = ""
-accountsHeaderArray = ["NONE"]
+accountsHeaderDict = {"NONE", "NONE"}
  
 root = Tk()
 root.title("Gainsight Contact List Creator")
@@ -83,7 +126,7 @@ label3.grid(row=4, column=0)
 
 idvar = StringVar(root)
 idvar.set("NONE")
-idMenu = OptionMenu(root, idvar, *accountsHeaderArray, command=headerPrinter)
+idMenu = OptionMenu(root, idvar, *accountsHeaderDict)
 idMenu.grid(row=5, column=0)
 
 label4 = Label(root,text="Please select column you would like to condition")
@@ -91,7 +134,7 @@ label4.grid(row=6, column=0)
 
 valvar = StringVar(root)
 valvar.set("NONE")
-valMenu = OptionMenu(root, valvar, *accountsHeaderArray, command=headerPrinter)
+valMenu = OptionMenu(root, valvar, *accountsHeaderDict)
 valMenu.grid(row=7, column=0)
 
 label5 = Label(root,text="Please select a conditional operator")
@@ -114,7 +157,7 @@ label6.grid(row=12, column=0)
 f = Entry(root)
 f.grid(row=13, column=0)
 
-r = Button(root, text="RUN", command=fileOpener)
+r = Button(root, text="RUN", command=runIt)
 r.grid(row=14, column=0)
 
 root.mainloop()
