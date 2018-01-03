@@ -27,13 +27,31 @@ def fileOpener():
 
 def accountsFileOpener():
 	global accountsFileName
+	global accountsHeaderArray
+
 	accountsFileName = fileOpener()
 	print(accountsFileName)
+	headerTest = csvLoader(accountsFileName)
+	accountsHeaderArray = headerParse(headerTest)
+	idMenu = OptionMenu(root, idvar, *accountsHeaderArray, command=headerPrinter)
+	idMenu.grid(row=5, column=0)
+
+	valMenu = OptionMenu(root, valvar, *accountsHeaderArray, command=headerPrinter)
+	valMenu.grid(row=7, column=0)
+
+	return 0
+
+
 
 def salesforceFileOpener():
 	global salesForceFileName
 	salesForceFileName = fileOpener()
 	print(salesForceFileName)
+
+def headerPrinter():
+	global accountsHeaderArray
+	for item in accountsHeaderArray:
+		print(item)
 
 ###
 ###
@@ -43,7 +61,7 @@ def salesforceFileOpener():
 
 accountsFileName = ""
 salesForceFileName = ""
-accountsHeaderArray = []
+accountsHeaderArray = ["NONE"]
  
 root = Tk()
 root.title("Gainsight Contact List Creator")
@@ -63,19 +81,17 @@ c.grid(row=3, column=0)
 label3 = Label(root,text="Please select the Instance column")
 label3.grid(row=4, column=0)
 
-idarray = ["one", "two", "three"]
-
 idvar = StringVar(root)
-idvar.set("one")
-idMenu = OptionMenu(root, idvar, *idarray)
+idvar.set("NONE")
+idMenu = OptionMenu(root, idvar, *accountsHeaderArray, command=headerPrinter)
 idMenu.grid(row=5, column=0)
 
 label4 = Label(root,text="Please select column you would like to condition")
 label4.grid(row=6, column=0)
 
 valvar = StringVar(root)
-valvar.set("one")
-valMenu = OptionMenu(root, valvar, "one", "two", "three")
+valvar.set("NONE")
+valMenu = OptionMenu(root, valvar, *accountsHeaderArray, command=headerPrinter)
 valMenu.grid(row=7, column=0)
 
 label5 = Label(root,text="Please select a conditional operator")
