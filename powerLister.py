@@ -72,6 +72,25 @@ def dictSearcher(dictionary, csvReader, keyColumn, csvWriter, newHeader):
 				csvWriter.writerow(row)
 		count += 1
 
+def dictDeleter(dictionary, conditionalString, conditionalValue):
+	newDict = {}
+	for item in dictionary:
+		if(dictionary[item] == "No Data"):
+			continue
+		if(conditionalString=="<"):
+			if(float(dictionary[item]) < conditionalValue):
+				newDict[item] = dictionary[item]
+		if(conditionalString==">"):
+			if(float(dictionary[item]) > conditionalValue):
+				newDict[item] = dictionary[item]
+		if(conditionalString=="="):
+			if(float(dictionary[item]) == conditionalValue):
+				newDict[item] = dictionary[item]
+		if(conditionalString=="!="):
+			if(float(dictionary[item]) != conditionalValue):
+				newDict[item] = dictionary[item]
+	return newDict
+
 def headerParse(reader):
 	headerArray = []
 	for row in reader:
@@ -89,17 +108,30 @@ def headerParse(reader):
 ###
 ###
 
+headerTest = csvLoader('accountsPortal.csv')
+headerArray = headerParse(headerTest)
+# print headers for users to select the account site to trim, and the value they are searching for
+for item in headerArray:
+	print(item[0])
+
 idColumn = 1
 valueColumn = 7
 
 file = csvLoader('accountsPortal.csv')
+
 accountsDict = columnStrip(file, 1, 7)
 
-file.seek(0)
+# Here's where I'd have the user select the condition to apply to the dictionary to filter users
+accountsDict = dictDeleter(accountsDict, ">", 20)
 
 accountSiteColumn = 1
 
+# Here's where the user would select their salesforce .csv 
 SFfile = csvLoader('SFReport.csv')
+
+# Ask the user to name the newfile
 newfile = csvWriter('newfile.csv')
+
+# Ask the user to name their header, possibly before naming newfile?
 dictSearcher(accountsDict, SFfile, accountSiteColumn, newfile, 'test header')
 
