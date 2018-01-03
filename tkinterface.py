@@ -43,7 +43,15 @@ def accountsFileOpener():
 
 def salesforceFileOpener():
 	global salesForceFileName
+	global sfHeaderDict
+
 	salesForceFileName = fileOpener()
+	headerTest = csvLoader(salesForceFileName)
+	sfHeaderDict = headerParse(headerTest)
+
+	sfMenu = OptionMenu(root, sfvar, *sfHeaderDict)
+	sfMenu.grid(row=9, column=0)
+
 
 def headerPrinter():
 	global accountsHeaderDict
@@ -60,11 +68,9 @@ def runIt():
 
 	idPair = idvar.get()
 	idColumn = accountsHeaderDict[idPair]
-	print(idColumn)
 
 	valuePair = valvar.get()
 	valueColumn = accountsHeaderDict[valuePair]
-	print(valueColumn)
 
 	file = csvLoader('accountsPortal.csv')
 
@@ -91,10 +97,12 @@ def runIt():
 	newFileName += ".csv"
 	newfile = csvWriter(newFileName)
 
-	accountSiteColumn = 1
+	accountSiteTrimmed = sfvar.get()
+	accountSiteColumn = sfHeaderDict[accountSiteTrimmed]
 
 	# Ask the user to name their header, possibly before naming newfile?
-	dictSearcher(accountsDict, SFfile, accountSiteColumn, newfile, 'test header')
+	headerName = h.get()
+	dictSearcher(accountsDict, SFfile, accountSiteColumn, newfile, headerName)
 
 ###
 ###
@@ -105,6 +113,7 @@ def runIt():
 accountsFileName = ""
 salesForceFileName = ""
 accountsHeaderDict = {"NONE", "NONE"}
+sfHeaderDict = {"NONE", "NONE"}
  
 root = Tk()
 root.title("Gainsight Contact List Creator")
@@ -137,27 +146,41 @@ valvar.set("NONE")
 valMenu = OptionMenu(root, valvar, *accountsHeaderDict)
 valMenu.grid(row=7, column=0)
 
+label8 = Label(root,text="Please select the Account Site Trimmed column")
+label8.grid(row=8, column=0)
+
+sfvar = StringVar(root)
+sfvar.set("NONE")
+sfMenu = OptionMenu(root, sfvar, *sfHeaderDict)
+sfMenu.grid(row=9, column=0)
+
 label5 = Label(root,text="Please select a conditional operator")
-label5.grid(row=8, column=0)
+label5.grid(row=10, column=0)
 
 convar = StringVar(root)
 convar.set("<")
 operatorMenu = OptionMenu(root, convar, "<", ">", "=", "!=")
-operatorMenu.grid(row=9, column=0)
+operatorMenu.grid(row=11, column=0)
 
 label6 = Label(root,text="Please enter a conditional value")
-label6.grid(row=10, column=0)
-
-e = Entry(root)
-e.grid(row=11, column=0)
-
-label6 = Label(root,text="Please name your new .csv file")
 label6.grid(row=12, column=0)
 
+e = Entry(root)
+e.grid(row=13, column=0)
+
+label9 = Label(root,text="Please provide a header for the column of values")
+label9.grid(row=14, column=0)
+
+h = Entry(root)
+h.grid(row=15, column=0)
+
+label6 = Label(root,text="Please name your new .csv file")
+label6.grid(row=16, column=0)
+
 f = Entry(root)
-f.grid(row=13, column=0)
+f.grid(row=17, column=0)
 
 r = Button(root, text="RUN", command=runIt)
-r.grid(row=14, column=0)
+r.grid(row=18, column=0)
 
 root.mainloop()
