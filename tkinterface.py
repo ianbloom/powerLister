@@ -13,6 +13,7 @@ Then, the user will be asked to specify the header for the data to be imported f
 """
 from tkinter import *
 from tkinter import filedialog
+from powerLister import *
 
 ###
 ###
@@ -24,11 +25,25 @@ def fileOpener():
 	root.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select CSV file",filetypes = (("csv files","*.csv"),("all files","*.*")))
 	return(root.filename)
 
+def accountsFileOpener():
+	global accountsFileName
+	accountsFileName = fileOpener()
+	print(accountsFileName)
+
+def salesforceFileOpener():
+	global salesForceFileName
+	salesForceFileName = fileOpener()
+	print(salesForceFileName)
+
 ###
 ###
 ###
 ###
 ###
+
+accountsFileName = ""
+salesForceFileName = ""
+accountsHeaderArray = []
  
 root = Tk()
 root.title("Gainsight Contact List Creator")
@@ -36,21 +51,23 @@ root.title("Gainsight Contact List Creator")
 label = Label(root,text="Please select an accounts portal report")
 label.grid(row=0, column=0)
 
-b = Button(root, text="OK", command=fileOpener)
+b = Button(root, text="OK", command=accountsFileOpener)
 b.grid(row=1, column=0)
 
 label2 = Label(root,text="Please select a Salesforce Contacts report")
 label2.grid(row=2, column=0)
 
-c = Button(root, text="OK", command=fileOpener)
+c = Button(root, text="OK", command=salesforceFileOpener)
 c.grid(row=3, column=0)
 
 label3 = Label(root,text="Please select the Instance column")
 label3.grid(row=4, column=0)
 
+idarray = ["one", "two", "three"]
+
 idvar = StringVar(root)
 idvar.set("one")
-idMenu = OptionMenu(root, idvar, "one", "two", "three")
+idMenu = OptionMenu(root, idvar, *idarray)
 idMenu.grid(row=5, column=0)
 
 label4 = Label(root,text="Please select column you would like to condition")
