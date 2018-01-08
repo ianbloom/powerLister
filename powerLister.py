@@ -46,10 +46,19 @@ def columnStrip(reader, idIndex, valIndex):
 		headerSkipper += 1
 		if headerSkipper > 2:
 			# Produce AccountSiteTrimmed for dictionary key
-			key = row[idIndex].replace("_Sales-", "")
+			if "_Sales-" in row[idIndex]:	
+				key = row[idIndex].replace("_Sales-", "")
+			if "_Customer Success-" in row[idIndex]:	
+				key = row[idIndex].replace("_Customer Success-", "")
 			# Grab average column for dictionary value
 			value = row[valIndex]
-			returnColumns[key] = value
+			if('K' in value):
+				temp = float(value.replace('K', '')) * 1000
+				returnColumns[key] = temp
+			else:
+				returnColumns[key] = value
+	for item in returnColumns:
+		print(item, returnColumns[item])
 	return(returnColumns)
 
 def dictSearcher(dictionary, csvReader, keyColumn, csvWriter, newHeader):
@@ -75,6 +84,7 @@ def dictSearcher(dictionary, csvReader, keyColumn, csvWriter, newHeader):
 def dictDeleter(dictionary, conditionalString, conditionalValue):
 	newDict = {}
 	for item in dictionary:
+		# Depending on the conditional statement a user selects, a different comparison is used
 		if(dictionary[item] == "No Data"):
 			continue
 		if(conditionalString=="<"):
@@ -90,7 +100,7 @@ def dictDeleter(dictionary, conditionalString, conditionalValue):
 			if(float(dictionary[item]) != conditionalValue):
 				newDict[item] = dictionary[item]
 	return newDict
-
+"""
 def headerParse(reader):
 	headerArray = []
 	for row in reader:
@@ -101,6 +111,16 @@ def headerParse(reader):
 				headerArray.append([item, col])
 			break
 	return(headerArray)
+"""
+def headerParse(reader):
+	headerDict = {}
+	for row in reader:
+		rowLength = len(row)
+		if row[0] not in (None, ""):
+			for col, item in enumerate(row):
+				headerDict[item] = col
+			break
+	return(headerDict)
 
 ###
 ###
@@ -108,6 +128,7 @@ def headerParse(reader):
 ###
 ###
 
+"""
 headerTest = csvLoader('accountsPortal.csv')
 headerArray = headerParse(headerTest)
 # print headers for users to select the account site to trim, and the value they are searching for
@@ -134,4 +155,5 @@ newfile = csvWriter('newfile.csv')
 
 # Ask the user to name their header, possibly before naming newfile?
 dictSearcher(accountsDict, SFfile, accountSiteColumn, newfile, 'test header')
+"""
 

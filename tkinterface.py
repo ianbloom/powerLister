@@ -72,7 +72,8 @@ def runIt():
 	valuePair = valvar.get()
 	valueColumn = accountsHeaderDict[valuePair]
 
-	file = csvLoader('accountsPortal.csv')
+	# file = csvLoader('accountsPortal.csv')
+	file = csvLoader(accountsFileName)
 
 	accountsDict = columnStrip(file, int(idColumn), int(valueColumn))
 
